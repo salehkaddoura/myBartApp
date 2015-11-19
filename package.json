@@ -1,0 +1,27 @@
+{
+  "name": "bart-now",
+  "version": "1.0.0",
+  "description": "bartNow App",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/salehkaddoura/myBartApp.git"
+  },
+  "author": "Saleh Kaddoura",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/salehkaddoura/myBartApp/issues"
+  },
+  "homepage": "https://github.com/salehkaddoura/myBartApp#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  },
+  "engines": {
+    "npm": "2.11.x",
+    "node": "0.12.x"
+  }
+}
