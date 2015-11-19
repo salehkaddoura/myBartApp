@@ -32,3 +32,6 @@ npm-debug.log
 # Gulp folders
 dist
 .tmp
+
+# DS_Store
+.DS_Store
