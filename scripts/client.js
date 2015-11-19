@@ -1,4 +1,4 @@
-//Create a new Angular Module for the bartNowApp. 
+'use strict';
 var bartNowApp = angular.module("bartNowApp", ['ngRoute']);
 
 bartNowApp.config(['$routeProvider',
@@ -133,50 +133,37 @@ bartNowApp.controller("StationsCtrl", ['$scope', '$http', 'GeolocationService',
   function ($scope, $http, geoLocationService) {
 
     $scope.stations = [];
-    //Start with an empty position and a default status...
     $scope.position = {};
     $scope.geoLocationStatus = "Determing Position....";
 
     $scope.getPosition = function () {
       //Get the position from our GeoLocationService
-      geoLocationService().then(function (position) {
+      geoLocationService().then(function(position) {
         //If we got a position back, save it to the $scope.position
         $scope.position = { latitude: position.coords.latitude, longitude: position.coords.longitude };
         //And update the status
         $scope.geoLocationStatus = "Position Retrieved! (" + $scope.position.latitude + "," + $scope.position.longitude + ")";
-        console.log('######## ##', $scope.position);
         $scope.getStations(); 
-      }, function (reason) {
-        //otherwise, there was an error.  
-        //Use a fake position if you can't use GPS on your device...
-        //Microsoft SF Office: (37.785027,-122.406749 - http://binged.it/TZjpC6)
+      }, function(reason) {
+        //otherwise, there was an error, set a random position
         $scope.position = { latitude: 37.785027, longitude: -122.406749 };
         $scope.geoLocationStatus = "Position could not be determined: " + reason + " Using Fake Position! (" + $scope.position.latitude + "," + $scope.position.longitude + ")";
-        $scope.getStations(); 
       });
-
-      //regardless of the position, get the stations.  
-      //we waited to get stations because if the position is available
-      //we can (eventually) pass it to the backend service to get 
-      //stations sorted by their distance from our position
-      
-      
     };
 
     $scope.getStations = function () {
-      //var stationsUrl = 'data/stations.json';
-      //var stationsUrl = 'http://bartnowapidemo.azurewebsites.net/api/stations?lat=' + $scope.position.latitude + '&lon=' + $scope.position.longitude;
-      console.log('##scope', $scope.position.latitude);
+      // var stationsUrl = 'http://localhost:8080/v1/stations?lat=' + $scope.position.latitude + '&lon=' + $scope.position.longitude;
       var stationsUrl = 'https://mybartapi.herokuapp.com/v1/stations?lat=' + $scope.position.latitude + '&lon=' + $scope.position.longitude;
 
       $http.get(stationsUrl).success(function (result) {
-        console.log('####', result);
         $scope.stations = result;
       });
-    }
+    };
 
+    //Call getStation() to get stations before map is loaded.x
     //Call getPositiion() to get the current position. 
-    //getPosition() then calls getStation() to retrieve the station data for us
+    //getPosition() then calls getStation() to retrieve stations by proximity
+    $scope.getStations();
     $scope.getPosition();
 
   }]);
@@ -185,27 +172,17 @@ bartNowApp.controller("StationsCtrl", ['$scope', '$http', 'GeolocationService',
 bartNowApp.controller("TrainsCtrl", ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
 
   $scope.stationAbbr = $routeParams.stationAbbr;
-  $scope.station = null;
-
+  $scope.station;
 
   $scope.getStations = function () {
-   // var stationsUrl = 'data/stations.json';
-    //var stationsUrl = 'http://bartnowapidemo.azurewebsites.net/api/etd/' + $scope.stationAbbr;
+    // var stationsUrl = 'http://localhost:8080/v1/etd/' + $scope.stationAbbr;
     var stationsUrl = 'https://mybartapi.herokuapp.com/v1/etd/' + $scope.stationAbbr;
 
     //Go get all the stations from the data source
     $http.get(stationsUrl).success(function (result) {
       //If you call a service, and get a single station back just set the station to the result
-      $scope.station = result[0];
-
-      //Use using the sample data though, all stations are returned
-      //Loop through them until you find the matching one
-      //for(var i in result){
-      //  if(result[i].abbr === $scope.stationAbbr){
-      //    $scope.station = result[i];
-      //    break;
-      //  }
-      //}
+      console.log('###', result);
+      $scope.station = result;
     });
   }
 
